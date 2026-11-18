@@ -1,0 +1,50 @@
+name: Build issues
+
+# Builds every issue whose folder changed (or all of them, when the
+# pipeline itself changed or on a manual run) and uploads the PDFs.
+# Artifacts are kept 7 days: they preview a change. Download the print
+# files soon after the build that made them.
+on:
+  push:
+    branches: ['**']
+    paths: ['issues/**', 'style/**', 'tools/**', 'fonts/**', 'make.sh', '.github/workflows/build.yml']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pdf:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Install pandoc and the Python packages
+        timeout-minutes: 10
+        run: tools/ci-setup.sh
+
+      - name: Pick the issues to build
+        id: pick
+        run: |
+          all=$(ls -d issues/*/ | sed 's|/$||')
+          if [ "${{ github.event_name }}" = workflow_dispatch ] || ! git rev-parse -q --verify HEAD^ >/dev/null; then
+            list="$all"
+          else
+            changed=$(git diff --name-only HEAD^ HEAD)
+            if echo "$changed" | grep -qvE '^issues/'; then list="$all"
+            else list=$(echo "$changed" | grep -oE '^issues/[^/]+' | sort -u); fi
+          fi
+          echo "issues<<EOF" >> "$GITHUB_OUTPUT"; echo "$list" >> "$GITHUB_OUTPUT"; echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: |
+          for i in ${{ steps.pick.outputs.issues }}; do
+            [ -f "$i/issue.md" ] && ./make.sh "$i" "$RUNNER_TEMP/pdf/$(basename "$i")"
+          done
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: zine-pdf
+          path: ${{ runner.temp }}/pdf/
+          retention-days: 7

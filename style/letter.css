@@ -1,0 +1,21 @@
+/* Letter edition: 8.5 x 11 in trim, 0.125 in bleed for print on demand.
+   Two justified columns under a full-measure kicker, title and lede, as in
+   the reference magazine (whose A4 page is 0.27 in narrower and 0.69 in
+   taller than letter). */
+:root {
+  --trim-w: 8.5in; --trim-h: 11in;
+  --m-top: .62in; --m-foot: .72in; --m-in: .62in; --m-out: .62in; --folio-drop: .26in;
+  --body-size: 8.8pt; --body-lead: 1.5;
+  --title-size: 40pt; --title-gap: .22in; --kicker-gap: .2in;
+  --lede-size: 12.6pt; --lede-gap: .18in;
+  --pull-size: 21pt; --numeral-size: 76pt; --toc-size: 12.5pt;
+  --toc-cols: .45in 1.15in 1fr;
+  --frame-gap: .14in; --frame-border: 5pt;
+  --plate-h: calc(var(--trim-h) + var(--b) - var(--m-foot));
+  --plate-img-h: calc(var(--trim-h) * .68 + var(--b));
+}
+.body { column-count: 2; column-gap: .24in; column-fill: balance; }
+.lede { max-width: 6.4in; }
+.contents .toc { margin-left: 0; }
+.letter { column-count: 2; column-gap: .24in; }
+.letter::before, .letter[data-by]::after { column-span: none; }

@@ -1,0 +1,22 @@
+/* Half-letter edition: 5.5 x 8.5 in, no bleed, one column; imposed two-up
+   on letter for printing at home and stapling on the fold. Home printers
+   can't print to the edge, so a plate keeps a margin all round. */
+:root {
+  --trim-w: 5.5in; --trim-h: 8.5in;
+  --m-top: .5in; --m-foot: .6in; --m-in: .55in; --m-out: .45in; --folio-drop: .22in;
+  --body-size: 8.6pt; --body-lead: 1.48;
+  --title-size: 25pt; --title-gap: .14in; --kicker-gap: .15in;
+  --lede-size: 10.4pt; --lede-gap: .12in;
+  --pull-size: 15pt; --numeral-size: 54pt; --toc-size: 10pt;
+  --toc-cols: .32in .9in 1fr;
+  --frame-gap: .08in; --frame-border: 3.5pt;
+  --plate-h: calc(var(--trim-h) - var(--m-top) - var(--m-foot));
+  --plate-img-h: calc(var(--trim-h) * .58);
+}
+@page plate { margin: var(--m-top) var(--m-out) var(--m-foot) var(--m-out);
+  @bottom-left { padding-left: 0; } @bottom-right { padding-right: 0; } }
+.plate .figcap { margin-left: 0; margin-right: 0; }
+.plate .pull { left: 0; right: 0; }
+.body { column-count: 1; }
+.strip .frames { grid-template-columns: repeat(auto-fit, minmax(1in, 1fr)); }
+.contact .frames { grid-template-columns: repeat(var(--half-cols, 6), 1fr); }
